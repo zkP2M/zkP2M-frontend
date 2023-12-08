@@ -10,8 +10,19 @@ export const RazorPay = () => {
   const [Razorpay] = useRazorpay();
 
   const handlePayment = useCallback(async () => {
+    const res = await fetch(`/order`, {
+      method: "POST",
+      body: JSON.stringify({
+        amount: 3000,
+        currency: "INR",
+      }),
+    });
+
+    const resJson = await res.json();
+    console.log(resJson);
+
     // const order = await createOrder(params);
-    const order = { id: "order_N9tzBPZrtz7oIH" };
+    const order = { id: resJson.orderId };
 
     const options: RazorpayOptions = {
       key: RAZOR_API_KEY,
