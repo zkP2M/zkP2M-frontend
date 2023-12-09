@@ -5,12 +5,13 @@ import { prepareWriteContract, readContract, writeContract } from "@wagmi/core";
 import { useToast } from "@/components/ui/use-toast";
 import { ERR_MSG } from "@/lib/consts";
 
-export const USDC_CONTRACT = process.env
-  .NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`;
 export const P2M_CONTRACT_ADDRESS = process.env
   .NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS as `0x${string}`;
+export const USDC_CONTRACT = process.env
+  .NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`;
 
-console.log(USDC_CONTRACT, P2M_CONTRACT_ADDRESS);
+console.log("ZKP2M: ", P2M_CONTRACT_ADDRESS);
+console.log("USDC: ", USDC_CONTRACT);
 
 export const useP2MContractRead = (
   functionName: string,
