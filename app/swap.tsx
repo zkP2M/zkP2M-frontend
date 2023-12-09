@@ -13,6 +13,7 @@ import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
 import { Check, Loader } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
+import { waitForTransaction } from "@wagmi/core";
 
 const RAZOR_API_KEY = process.env.NEXT_PUBLIC_KEY_ID;
 
@@ -26,6 +27,9 @@ export const Swap = () => {
   const { toast } = useToast();
 
   const { readAsync: readDepositor } = useReadDynamicP2MContract("getDeposit");
+  const { readAsync: readIntentHash } = useReadDynamicP2MContract(
+    "getIdCurrentIntentHash"
+  );
 
   const { data, isLoading: bestRateLoading } = useP2MContractRead(
     "getBestRate",
@@ -119,8 +123,14 @@ export const Swap = () => {
         return;
       }
 
+      await waitForTransaction({
+        hash: writeRes?.hash,
+      });
+
       // 2) get intentHash & depositor
-      const intentHash = writeRes.hash;
+      // const intentHash = writeRes.hash;
+      const intentHash = await readIntentHash([address]);
+      console.log("intentHash", intentHash);
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
