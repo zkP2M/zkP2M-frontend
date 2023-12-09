@@ -17,10 +17,13 @@ export const Swap = () => {
   const { address } = useAccount();
   const { toast } = useToast();
 
-  const { data } = useP2MContractRead("getBestRate", {
-    args: [Number(usd) * Math.pow(10, 6)],
-    enabled: !!usd,
-  });
+  const { data, isLoading: bestRateLoading } = useP2MContractRead(
+    "getBestRate",
+    {
+      args: [Number(usd) * Math.pow(10, 6)],
+      enabled: !!usd,
+    }
+  );
 
   const { isLoading, isError, writeAsync } =
     useP2MContractWrite("signalIntent");
@@ -35,16 +38,8 @@ export const Swap = () => {
     const DOLLAR_TO_INR = 83;
     const num = (data as any)[1] as unknown as BigInt;
 
-    console.log(
-      "d",
-      BigNumber.from(num)
-        .mul(BigNumber.from(DOLLAR_TO_INR))
-        .div(BigNumber.from(10).pow(18))
-        .toNumber()
-    );
-
-    const inr = BigNumber.from(num)
-      .mul(BigNumber.from(DOLLAR_TO_INR))
+    const inr = BigNumber.from(usd)
+      .mul(BigNumber.from(num))
       .div(BigNumber.from(10).pow(18))
       .toNumber();
 
@@ -160,7 +155,11 @@ export const Swap = () => {
         </div>
       </div>
 
-      <Button size="lg" onClick={onCreateOrderClick}>
+      <Button
+        size="lg"
+        onClick={onCreateOrderClick}
+        disabled={!usd || bestRateLoading}
+      >
         Create Order
       </Button>
     </div>
