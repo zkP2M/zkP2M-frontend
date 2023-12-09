@@ -66,6 +66,8 @@ export const Swap = () => {
 
   const onCreateOrderClick = useCallback(async () => {
     try {
+      setIsActionLoading(true);
+
       // 1) call signalIntent
       console.log("data", data);
 
@@ -85,8 +87,6 @@ export const Swap = () => {
 
       const depositor = await readDepositor([depositerId]);
       console.log("depositor", depositor);
-
-      setIsActionLoading(true);
 
       if (!usd) {
         setIsActionLoading(false);
