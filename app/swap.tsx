@@ -128,6 +128,9 @@ export const Swap = () => {
           currency: "INR",
           id: intentHash,
         }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       const resJson = await res.json();
