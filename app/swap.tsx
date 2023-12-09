@@ -59,13 +59,27 @@ export const Swap = () => {
   }, [data]);
 
   const onCreateOrderClick = useCallback(async () => {
-    // 1) call signalIntent
-    const depositerId = (data as any)[0] as unknown as BigInt;
-
-    const depositor = await readDepositor([depositerId]);
-    console.log("depositor", depositor);
-
     try {
+      // 1) call signalIntent
+      console.log("data", data);
+
+      const depositerId = (data as any)?.[0] as unknown as BigInt;
+
+      if (!depositerId) {
+        setIsActionLoading(false);
+
+        toast({
+          title: "Error",
+          description: "No depositor found!",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
+      const depositor = await readDepositor([depositerId]);
+      console.log("depositor", depositor);
+
       setIsActionLoading(true);
 
       if (!usd) {
@@ -106,9 +120,6 @@ export const Swap = () => {
       // 2) get intentHash & depositor
       const intentHash = writeRes.hash;
 
-      const depositor = await readDepositor([depositerId]);
-      console.log("depositor", depositor);
-
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
         method: "POST",
@@ -116,7 +127,6 @@ export const Swap = () => {
           amount: inrValue,
           currency: "INR",
           id: intentHash,
-          recepient: (depositor as any).upiId,
         }),
       });
 
