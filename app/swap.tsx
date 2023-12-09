@@ -16,7 +16,7 @@ export const Swap = () => {
   const { address } = useAccount();
   const { toast } = useToast();
 
-  const { data } = useP2MContractRead("getDeposit", {
+  const { data } = useP2MContractRead("getBestRate", {
     args: [Number(usd) * Math.pow(10, 6)],
     enabled: !!usd,
   });
