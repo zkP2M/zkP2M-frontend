@@ -8,11 +8,12 @@ import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
 import { BigNumber } from "ethers";
+import { Loader } from "lucide-react";
 
 const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
 
 export const Swap = () => {
-  const [usd, setUSD] = useState<number | undefined>(undefined);
+  const [usd, setUSD] = useState<number | string>("");
 
   const { address } = useAccount();
   const { toast } = useToast();
@@ -33,9 +34,6 @@ export const Swap = () => {
   const inrValue = useMemo(() => {
     if (!data) return 0;
 
-    console.log("d", data);
-
-    const DOLLAR_TO_INR = 83;
     const num = (data as any)[1] as unknown as BigInt;
 
     const inr = BigNumber.from(usd)
@@ -48,7 +46,7 @@ export const Swap = () => {
 
   const onCreateOrderClick = useCallback(async () => {
     // 1) call signalIntent
-    const highestInr = { id: "a" };
+    const highestDepositId = (data as any)[0] as unknown as BigInt;
 
     try {
       if (!usd) {
@@ -71,11 +69,17 @@ export const Swap = () => {
         return;
       }
 
-      const args = [highestInr.id, usd, address];
+      const args = [highestDepositId, usd, address];
       const writeRes = await writeAsync(args);
 
+      console.log("signalIntent", writeRes);
+
+      if (!writeRes) {
+        return;
+      }
+
       // 2) get intentHash
-      const intentHash = "HASH";
+      const intentHash = writeRes.hash;
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
@@ -95,8 +99,8 @@ export const Swap = () => {
       // 4) do payment
       const options: RazorpayOptions = {
         key: RAZOR_API_KEY,
-        amount: "3000",
-        currency: "INR",
+        amount: usd.toString(),
+        currency: "USD",
         name: "ZKP2M",
         description: "Transaction",
         order_id: order.id,
@@ -113,7 +117,7 @@ export const Swap = () => {
 
       // 5) pass to webhook
     } catch (err) {}
-  }, [Razorpay]);
+  }, [Razorpay, usd]);
 
   return (
     <div className="flex flex-col gap-7">
@@ -128,7 +132,15 @@ export const Swap = () => {
               className="border-0 focus:active:focus-visible:border-0 text-4xl font-bold px-0 focus:ring-0 active:ring-0 focus-visible:ring-0"
               placeholder="0"
               value={usd}
-              onChange={(e) => setUSD(Number(e.target.value) || undefined)}
+              onChange={(e) => {
+                const val = Number(e.target.value) || undefined;
+
+                if (val && val > 10 * Math.pow(10, 12)) {
+                  return;
+                }
+
+                setUSD(Number(e.target.value) || "");
+              }}
             />
           </div>
 
@@ -157,9 +169,11 @@ export const Swap = () => {
 
       <Button
         size="lg"
+        className="gap-2"
         onClick={onCreateOrderClick}
-        disabled={!usd || bestRateLoading}
+        disabled={!usd || bestRateLoading || isLoading}
       >
+        {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
         Create Order
       </Button>
     </div>
