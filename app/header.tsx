@@ -5,7 +5,7 @@ export const Header = () => (
   <header className="flex items-center justify-between p-8">
     <div className="flex items-center gap-6">
       <Link
-        className="text-2xl font-bold transition-all hover:text-slate-100"
+        className="text-2xl font-bold transition-all hover:text-foreground"
         href="/"
       >
         ZKP2M
@@ -13,14 +13,14 @@ export const Header = () => (
 
       <div className="w-full flex gap-4 items-center">
         <Link
-          className="text-slate-300 font-medium text-sm transition-all hover:text-slate-100"
+          className="text-foreground/80 font-medium text-sm transition-all hover:text-foreground"
           href="/register"
         >
           Register
         </Link>
 
         <Link
-          className="text-slate-300 font-medium text-sm transition-all hover:text-slate-100"
+          className="text-foreground/70 font-medium text-sm transition-all hover:text-foreground"
           href="/deposit"
         >
           Deposit

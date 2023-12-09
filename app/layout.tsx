@@ -53,7 +53,7 @@ export default function RootLayout({
       <body
         className={cn(
           inter.variable,
-          "dark min-h-screen bg-background font-sans antialiased"
+          "min-h-screen bg-background font-sans antialiased"
         )}
       >
         <WagmiConfig config={wagmiConfig}>

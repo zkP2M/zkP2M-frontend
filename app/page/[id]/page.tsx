@@ -7,14 +7,16 @@ const Page = () => {
     return (
       <div className="w-full h-screen flex gap-2 justify-center items-center">
         <Loader className="animate-spin" />
-        <h6 className="text-lg font-bold text-slate-200">Generating Proof..</h6>
+        <h6 className="text-lg font-bold text-foreground/80">
+          Generating Proof..
+        </h6>
       </div>
     );
   }
 
   return (
     <div>
-      <h6 className="text-4xl font-bold text-slate-200">Hello</h6>
+      <h6 className="text-4xl font-bold text-foreground/80">Hello</h6>
     </div>
   );
 };

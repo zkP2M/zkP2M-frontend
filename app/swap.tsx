@@ -105,7 +105,7 @@ export const Swap = () => {
       <h6 className="text-4xl font-bold ">Swap</h6>
 
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border border-slate-700 text-slate-300 focus-within:border-slate-400 focus-within:text-slate-200 transition-all">
+        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border border-foreground/30 text-foreground/70 focus-within:border-foreground/60 focus-within:text-foreground/80 transition-all">
           <div className="flex flex-col gap-2">
             <h6 className="text-sm font-medium">Requesting</h6>
             <Input
@@ -122,7 +122,7 @@ export const Swap = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border border-slate-700 text-slate-300 focus-within:border-slate-400 focus-within:text-slate-200 transition-all">
+        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border border-foreground/30 text-foreground/70 focus-within:border-foreground/60 focus-within:text-foreground/80 transition-all">
           <div className="flex flex-col gap-2">
             <h6 className="text-sm font-medium">Giving Away</h6>
             <Input
