@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const body = await request.json();
 
   const order = await instance.orders.create({
-    amount: Number(body.amount).toFixed(0),
+    amount: (Number(body.amount) * 100).toFixed(0),
     currency: body.currency,
     notes: {
       id: body.id,
