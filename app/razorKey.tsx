@@ -23,9 +23,6 @@ const formSchema = z.object({
 });
 
 export const RazerKey = () => {
-  const { isLoading, isError, write, writeAsync } =
-    useP2MContractWrite("register");
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,15 +30,16 @@ export const RazerKey = () => {
     },
   });
 
+  const razorKey = form.watch("key");
+  const { isLoading, isError, error, isSuccess, writeAsync, data } =
+    useP2MContractWrite("registerWithoutProff");
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
-    // update state
-    // state.razerKey = values.key;
+    const res = await writeAsync([razorKey]);
 
-    const args = [0, 0, 0, values.key];
-
-    // await writeAsync(args);
+    console.log("register", res);
   };
 
   return (
@@ -52,17 +50,21 @@ export const RazerKey = () => {
           name="key"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Razer API Key</FormLabel>
+              <FormLabel>Razorpay API Key</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="" {...field} />
               </FormControl>
-              <FormDescription>This is your razer key.</FormDescription>
+              <FormDescription>This is your Razorpay API key.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading || !form.formState.isDirty}>
-          {isLoading ? <Loader className="animate-spin" /> : null}
+        <Button
+          className="gap-2"
+          type="submit"
+          disabled={isLoading || isSuccess || !form.formState.isDirty}
+        >
+          {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
           Submit
         </Button>
       </form>

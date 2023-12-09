@@ -25,24 +25,32 @@ const formSchema = z.object({
 });
 
 export const DepositForm = () => {
-  const { isLoading, isError, write, writeAsync } =
-    useP2MContractWrite("offramp");
+  const { isLoading, isError, isSuccess, error, writeAsync } =
+    useP2MContractWrite("offRamp");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       upiId: "",
-      amount: undefined,
-      receiveAmount: undefined,
+      amount: "",
+      receiveAmount: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
-    const args = [values.upiId, values.amount, values.receiveAmount];
+    const args = [
+      //   values.upiId,
+      //   values.amount.toString(),
+      //   values.receiveAmount.toString(),
 
-    // await writeAsync(args);
+      "sachin@paytm",
+      "10000000",
+      "830000000",
+    ];
+
+    await writeAsync(args);
   };
 
   return (
@@ -102,8 +110,12 @@ export const DepositForm = () => {
           )}
         />
 
-        <Button type="submit" disabled={isLoading || !form.formState.isDirty}>
-          {isLoading ? <Loader className="animate-spin" /> : null}
+        <Button
+          type="submit"
+          className="gap-2"
+          disabled={isLoading || isSuccess || !form.formState.isDirty}
+        >
+          {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
           Submit
         </Button>
       </form>
