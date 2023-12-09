@@ -20,5 +20,7 @@ export async function POST(request: Request) {
     // customer_id: body.customer_id,
   });
 
+  console.log("ORDER", order);
+
   return Response.json({ orderId: order.id });
 }

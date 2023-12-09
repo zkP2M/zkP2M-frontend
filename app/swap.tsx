@@ -11,7 +11,6 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
-import { BigNumber } from "ethers";
 import { Check, Loader } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
 
@@ -45,6 +44,8 @@ export const Swap = () => {
 
   const inrValue = useMemo(() => {
     if (!data) return 0;
+
+    console.log();
 
     const num = (data as any)[1] as unknown as BigInt;
 
@@ -124,13 +125,10 @@ export const Swap = () => {
       const res = await fetch(`/order`, {
         method: "POST",
         body: JSON.stringify({
-          amount: inrValue,
+          amount: `${inrValue}`,
           currency: "INR",
           id: intentHash,
         }),
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
 
       const resJson = await res.json();
