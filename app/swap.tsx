@@ -12,13 +12,14 @@ import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
 import { BigNumber } from "ethers";
-import { Loader } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
 
 const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
 
 export const Swap = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isActionSuccess, setIsActionSuccess] = useState(false);
 
   const [usd, setUSD] = useState<number | string>("");
 
@@ -35,8 +36,10 @@ export const Swap = () => {
     }
   );
 
-  const { isLoading, isError, writeAsync } =
-    useP2MContractWrite("signalIntent");
+  const { isLoading, isError, writeAsync } = useP2MContractWrite(
+    "signalIntent",
+    { noToast: true }
+  );
 
   const [Razorpay] = useRazorpay();
 
@@ -111,7 +114,7 @@ export const Swap = () => {
           amount: 3000,
           currency: "INR",
           id: intentHash,
-          recepient: depositor.upiId,
+          recepient: (depositor as any).upiId,
         }),
       });
 
@@ -164,6 +167,7 @@ export const Swap = () => {
           });
 
           setIsActionLoading(false);
+          setIsActionSuccess(true);
         },
         notes: {
           id: intentHash,
@@ -173,14 +177,7 @@ export const Swap = () => {
       const rzpay = new Razorpay(options);
       rzpay.open();
 
-      toast({
-        title: "Swap successfull",
-        description: ERR_MSG,
-        variant: "accent",
-      });
-
       // 6) success
-      setIsActionLoading(false);
     } catch (err) {
       setIsActionLoading(false);
 
@@ -248,11 +245,18 @@ export const Swap = () => {
         size="lg"
         className="gap-2"
         onClick={onCreateOrderClick}
-        disabled={!usd || bestRateLoading || isActionLoading}
+        disabled={!usd || bestRateLoading || isActionLoading || isActionSuccess}
       >
         {isActionLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
         Create Order
       </Button>
+
+      {isActionSuccess ? (
+        <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
+          <Check className="w-4 h-4" />
+          Your swap is successful.
+        </p>
+      ) : null}
     </div>
   );
 };

@@ -23,7 +23,14 @@ export const useP2MContractRead = (
   });
 };
 
-export const useP2MContractWrite = (functionName: string) => {
+type ContractWriteOptions = {
+  noToast?: boolean;
+};
+
+export const useP2MContractWrite = (
+  functionName: string,
+  options?: ContractWriteOptions
+) => {
   const [data, setData] = useState<any>(undefined);
 
   const [isLoading, setLoading] = useState(false);
@@ -72,10 +79,12 @@ export const useP2MContractWrite = (functionName: string) => {
       setIsError(false);
       setError(null);
 
-      toast({
-        title: "Transaction Success",
-        variant: "accent",
-      });
+      if (!options?.noToast) {
+        toast({
+          title: "Transaction Success",
+          variant: "accent",
+        });
+      }
 
       return res;
     } catch (err) {
@@ -89,11 +98,13 @@ export const useP2MContractWrite = (functionName: string) => {
 
       setData(undefined);
 
-      toast({
-        title: "Transaction failed!",
-        description: ERR_MSG,
-        variant: "destructive",
-      });
+      if (!options?.noToast) {
+        toast({
+          title: "Transaction failed!",
+          description: ERR_MSG,
+          variant: "destructive",
+        });
+      }
     }
   };
 
