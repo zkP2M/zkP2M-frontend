@@ -68,9 +68,9 @@ export const RazerKey = () => {
           )}
         />
         <Button
-          className="w-full gap-2"
-          type="submit"
+          className="gap-2 w-full"
           size="lg"
+          type="submit"
           disabled={isLoading || isSuccess || !form.formState.isDirty}
         >
           {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}

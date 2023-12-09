@@ -3,7 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useP2MContractRead, useP2MContractWrite } from "@/contract";
+import {
+  useP2MContractRead,
+  useP2MContractWrite,
+  useReadDynamicP2MContract,
+} from "@/contract";
 import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
@@ -14,10 +18,14 @@ import { ERR_MSG } from "@/lib/consts";
 const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
 
 export const Swap = () => {
+  const [isActionLoading, setIsActionLoading] = useState(false);
+
   const [usd, setUSD] = useState<number | string>("");
 
   const { address } = useAccount();
   const { toast } = useToast();
+
+  const { readAsync: readDepositor } = useReadDynamicP2MContract("getDeposit");
 
   const { data, isLoading: bestRateLoading } = useP2MContractRead(
     "getBestRate",
@@ -47,10 +55,17 @@ export const Swap = () => {
 
   const onCreateOrderClick = useCallback(async () => {
     // 1) call signalIntent
-    const highestDepositId = (data as any)[0] as unknown as BigInt;
+    const depositerId = (data as any)[0] as unknown as BigInt;
+
+    const depositor = await readDepositor([depositerId]);
+    console.log("depositor", depositor);
 
     try {
+      setIsActionLoading(true);
+
       if (!usd) {
+        setIsActionLoading(false);
+
         toast({
           title: "Error",
           description: "Please enter valid amount",
@@ -61,6 +76,8 @@ export const Swap = () => {
       }
 
       if (!address) {
+        setIsActionLoading(false);
+
         toast({
           title: "Error",
           description: "Please connect your wallet",
@@ -70,17 +87,22 @@ export const Swap = () => {
         return;
       }
 
-      const args = [highestDepositId, usd, address];
+      const args = [depositerId, usd, address];
       const writeRes = await writeAsync(args);
 
       console.log("signalIntent", writeRes);
 
       if (!writeRes) {
+        setIsActionLoading(false);
+
         return;
       }
 
-      // 2) get intentHash
+      // 2) get intentHash & depositor
       const intentHash = writeRes.hash;
+
+      const depositor = await readDepositor([depositerId]);
+      console.log("depositor", depositor);
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
@@ -89,6 +111,7 @@ export const Swap = () => {
           amount: 3000,
           currency: "INR",
           id: intentHash,
+          recepient: depositor.upiId,
         }),
       });
 
@@ -98,6 +121,19 @@ export const Swap = () => {
       const order = { id: resJson.orderId };
 
       // 4) do payment
+
+      if (!depositor) {
+        setIsActionLoading(false);
+
+        toast({
+          title: "Error",
+          description: "Couldn't find depositor with the ID",
+          variant: "destructive",
+        });
+
+        return;
+      }
+
       const options: RazorpayOptions = {
         key: RAZOR_API_KEY,
         amount: inrValue.toString(),
@@ -105,8 +141,29 @@ export const Swap = () => {
         name: "ZKP2M",
         description: "Transaction",
         order_id: order.id,
+        prefill: {
+          method: "upi",
+        },
         handler: (res) => {
           console.log(res);
+
+          toast({
+            title: "Swap successfull",
+            description: ERR_MSG,
+            variant: "accent",
+          });
+
+          // 5) pass to webhook
+          fetch("https://proof.codes/zk", {
+            mode: "no-cors",
+            method: "POST",
+            body: JSON.stringify(res),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          setIsActionLoading(false);
         },
         notes: {
           id: intentHash,
@@ -122,8 +179,11 @@ export const Swap = () => {
         variant: "accent",
       });
 
-      // 5) pass to webhook
+      // 6) success
+      setIsActionLoading(false);
     } catch (err) {
+      setIsActionLoading(false);
+
       console.log("onCreateOrderClick", err);
 
       toast({
@@ -132,6 +192,8 @@ export const Swap = () => {
         variant: "destructive",
       });
     }
+
+    setIsActionLoading(false);
   }, [Razorpay, usd]);
 
   return (
@@ -186,9 +248,9 @@ export const Swap = () => {
         size="lg"
         className="gap-2"
         onClick={onCreateOrderClick}
-        disabled={!usd || bestRateLoading || isLoading}
+        disabled={!usd || bestRateLoading || isActionLoading}
       >
-        {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
+        {isActionLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
         Create Order
       </Button>
     </div>

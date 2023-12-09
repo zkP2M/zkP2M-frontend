@@ -12,6 +12,7 @@ export async function POST(request: Request) {
   const order = await instance.orders.create({
     amount: body.amount,
     currency: body.currency,
+    receipt: body.receipt,
     notes: {
       id: body.id,
     },

@@ -1,7 +1,7 @@
 import { useContractRead, useWalletClient } from "wagmi";
 import ABI from "./abi.json";
 import { useState } from "react";
-import { prepareWriteContract, writeContract } from "@wagmi/core";
+import { prepareWriteContract, readContract, writeContract } from "@wagmi/core";
 import { useToast } from "@/components/ui/use-toast";
 import { ERR_MSG } from "@/lib/consts";
 
@@ -98,4 +98,25 @@ export const useP2MContractWrite = (functionName: string) => {
   };
 
   return { writeAsync, isError, isLoading, isSuccess, error, data };
+};
+
+export const useReadDynamicP2MContract = (functionName: string) => {
+  const readAsync = async (args: any[]) => {
+    try {
+      const data = await readContract({
+        address: P2M_CONTRACT_ADDRESS,
+        abi: ABI.abi,
+        functionName,
+        args,
+      });
+
+      console.log("read", data);
+
+      return data;
+    } catch (err) {
+      console.log("useReadDynamicP2MContract: ", err);
+    }
+  };
+
+  return { readAsync };
 };
