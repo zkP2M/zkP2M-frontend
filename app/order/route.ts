@@ -9,18 +9,14 @@ export async function POST(request: Request) {
   // get req body
   const body = await request.json();
 
-  console.log("body", body);
-
   const order = await instance.orders.create({
-    amount: Number(body.amount),
+    amount: Number(body.amount).toFixed(0),
     currency: body.currency,
     notes: {
       id: body.id,
     },
     // customer_id: body.customer_id,
   });
-
-  console.log("ORDER", order);
 
   return Response.json({ orderId: order.id });
 }
