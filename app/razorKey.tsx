@@ -22,7 +22,7 @@ const formSchema = z.object({
   key: z.string(),
 });
 
-export const RazerKey = () => {
+export const RazorKeyForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

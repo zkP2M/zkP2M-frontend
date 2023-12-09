@@ -1,4 +1,4 @@
-import { RazerKey } from "../razorKey";
+import { RazorKeyForm } from "@/app/razorKey";
 
 const Register = () => {
   return (
@@ -7,7 +7,7 @@ const Register = () => {
         Merchant Registration
       </h1>
 
-      <RazerKey />
+      <RazorKeyForm />
     </div>
   );
 };
