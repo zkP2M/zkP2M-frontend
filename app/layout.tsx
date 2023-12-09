@@ -20,6 +20,8 @@ import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { Header } from "./header";
 
+import localFont from "next/font/local";
+
 const queryClient = new QueryClient();
 
 const { chains, publicClient } = configureChains(
@@ -43,6 +45,10 @@ const wagmiConfig = createConfig({
 });
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const satoshi = localFont({
+  src: "../fonts/satoshi.ttf",
+  variable: "--font-satoshi",
+});
 
 export default function RootLayout({
   children,
@@ -53,8 +59,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          inter.variable,
-          "dark min-h-screen bg-background font-sans antialiased"
+          // inter.variable,
+          satoshi.variable,
+          satoshi.className,
+          "min-h-screen bg-background font-[--font-satoshi] antialiased"
         )}
       >
         <WagmiConfig config={wagmiConfig}>
@@ -62,7 +70,7 @@ export default function RootLayout({
             <QueryClientProvider client={queryClient}>
               <Header />
 
-              <div className="max-w-xl mx-auto flex flex-col gap-6">
+              <div className="max-w-xl mx-auto flex flex-col gap-6 mt-20">
                 {children}
               </div>
             </QueryClientProvider>

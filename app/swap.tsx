@@ -11,7 +11,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
-import { Check, Loader } from "lucide-react";
+import { Check, Loader, ShuffleIcon } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
 import { waitForTransaction } from "@wagmi/core";
 
@@ -219,12 +219,12 @@ export const Swap = () => {
 
   return (
     <div className="flex flex-col gap-7">
-      <h6 className="text-4xl font-bold ">Swap</h6>
+      <h6 className="text-4xl font-black">Swap</h6>
 
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border border-foreground/30 text-foreground/70 focus-within:border-foreground/60 focus-within:text-foreground/80 transition-all">
+        <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border-2 border-foreground/30 text-foreground/70 focus-within:border-foreground/60 focus-within:text-foreground/80 transition-all shadow-md">
           <div className="flex flex-col gap-2">
-            <h6 className="text-sm font-medium">Requesting</h6>
+            <h6 className="text-sm font-semibold">Requesting</h6>
             <Input
               type="number"
               className="border-0 focus:active:focus-visible:border-0 text-4xl font-bold px-0 focus:ring-0 active:ring-0 focus-visible:ring-0"
@@ -265,22 +265,30 @@ export const Swap = () => {
         </div>
       </div>
 
-      <Button
-        size="lg"
-        className="gap-2"
-        onClick={onCreateOrderClick}
-        disabled={!usd || bestRateLoading || isActionLoading || isActionSuccess}
-      >
-        {isActionLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
-        Create Order
-      </Button>
+      <div className="flex flex-col gap-6 items-center">
+        <Button
+          size="lg"
+          className="gap-2 w-fit"
+          onClick={onCreateOrderClick}
+          disabled={
+            !usd || bestRateLoading || isActionLoading || isActionSuccess
+          }
+        >
+          {isActionLoading ? (
+            <Loader className="animate-spin w-6 h-6" />
+          ) : (
+            <ShuffleIcon className="w-6 h-6" />
+          )}
+          Create Order
+        </Button>
 
-      {isActionSuccess ? (
-        <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
-          <Check className="w-4 h-4" />
-          Your swap is successful.
-        </p>
-      ) : null}
+        {isActionSuccess ? (
+          <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
+            <Check className="w-4 h-4" />
+            Your swap is successful.
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 };

@@ -20,7 +20,7 @@ import {
   getUSDCContractAddress,
   useP2MContractWrite,
 } from "@/contract";
-import { Check, Loader } from "lucide-react";
+import { Check, Landmark, Loader, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   erc20ABI,
@@ -124,48 +124,60 @@ export const DepositForm = () => {
             )}
           />
 
-          <Button
-            type="submit"
-            size="lg"
-            className={cn(
-              "gap-2 w-full",
-              !window
-                ? ""
-                : isAllowed && !isAllowanceLoading
-                ? "flex"
-                : "hidden"
-            )}
-            disabled={isLoading || isSuccess || !form.formState.isDirty}
-          >
-            {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
-            Submit
-          </Button>
+          <div className="flex flex-col gap-6 items-center">
+            <Button
+              type="submit"
+              size="lg"
+              className={cn(
+                "gap-2 w-fit",
+                !window
+                  ? ""
+                  : isAllowed && !isAllowanceLoading
+                  ? "flex"
+                  : "hidden"
+              )}
+              disabled={isLoading || isSuccess || !form.formState.isDirty}
+            >
+              {isLoading ? (
+                <Loader className="animate-spin w-6 h-6" />
+              ) : (
+                <Landmark className="w-6 h-6" />
+              )}
+              Deposit
+            </Button>
 
-          {isSuccess ? (
-            <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
-              <Check className="w-4 h-4" />
-              Your deposit is successful.
-            </p>
-          ) : null}
+            {isSuccess ? (
+              <p className="flex items-center gap-1 text-xl font-bold text-primary/90">
+                <Check className="w-6 h-6" />
+                Your deposit is successful.
+              </p>
+            ) : null}
+          </div>
         </form>
       </Form>
 
-      {!isAllowed && !isAllowanceLoading ? (
-        <Button
-          className="gap-2"
-          size="lg"
-          disabled={isAllowed || isApproving || isAllowanceLoading}
-          onClick={() => allow(100)}
-        >
-          {isApproving ? <Loader className="animate-spin w-4 h-4" /> : null}
-          Allow
-        </Button>
-      ) : null}
-
-      <div>
-        {isAllowanceLoading ? (
-          <Loader className="animate-spin w-4 h-4" />
+      <div className="flex flex-col gap-6 items-center">
+        {!isAllowed && !isAllowanceLoading ? (
+          <Button
+            className="gap-2 w-fit"
+            size="lg"
+            disabled={isAllowed || isApproving || isAllowanceLoading}
+            onClick={() => allow(100)}
+          >
+            {isApproving ? (
+              <Loader className="animate-spin w-6 h-6" />
+            ) : (
+              <ShieldCheck className="w-6 h-6" />
+            )}
+            Approve USDC
+          </Button>
         ) : null}
+
+        <div>
+          {isAllowanceLoading ? (
+            <Loader className="animate-spin w-6 h-6" />
+          ) : null}
+        </div>
       </div>
     </>
   );

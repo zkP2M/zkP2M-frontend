@@ -20,29 +20,15 @@ export const Header = () => (
   <header className="flex items-center justify-between p-8">
     <div className="flex items-center gap-6">
       <Link
-        className="text-2xl font-bold transition-all hover:text-foreground"
+        className="text-2xl font-bold transition-all hover:text-foreground hover:scale-105 hover:shadow-xl hover:-translate-y-1 rounded-full active:translate-y-0.5 active:scale-95"
         href="/"
       >
-        ZKP2M
+        <LogoSvg />
       </Link>
 
-      <HeaderNavigationMenu />
-
-      {/* <div className="w-full flex gap-4 items-center">
-        <Link
-          className="text-foreground/80 font-medium text-sm transition-all hover:text-foreground"
-          href="/register"
-        >
-          Register
-        </Link>
-
-        <Link
-          className="text-foreground/70 font-medium text-sm transition-all hover:text-foreground"
-          href="/deposit"
-        >
-          Deposit
-        </Link>
-      </div> */}
+      <div className="w-fit bg-foreground p-2 rounded-lg">
+        <HeaderNavigationMenu />
+      </div>
     </div>
 
     <div className="flex items-center justify-between space-x-4">
@@ -55,14 +41,13 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "User Registration",
     href: "/register/user",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    description: `Register as a User. Enter your full name.`,
   },
   {
     title: "Merchant Registration",
     href: "/register/merchant",
     description:
-      "For sighted users to preview content available behind a link.",
+      "Register as a Merchant. Enter your RazorPay Read-only API Key.",
   },
 ];
 
@@ -70,42 +55,9 @@ const HeaderNavigationMenu = () => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {/* <NavigationMenuItem>
-          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                    href="/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      shadcn/ui
-                    </div>
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Beautifully designed components built with Radix UI and
-                      Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-              <ListItem href="/docs" title="Introduction">
-                Re-usable components built using Radix UI and Tailwind CSS.
-              </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
-              </ListItem>
-              <ListItem href="/docs/primitives/typography" title="Typography">
-                Styles for headings, paragraphs, lists...etc
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem> */}
-
         <NavigationMenuItem>
           <NavigationMenuTrigger>Register</NavigationMenuTrigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className="bg-foreground">
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
                 <ListItem
@@ -141,14 +93,16 @@ const ListItem = React.forwardRef<
         <Link
           ref={ref}
           className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "h-full block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-background/20 hover:text-accent-foreground focus:bg-background/20 focus:text-accent-foreground",
             className
           )}
           href={href}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <div className="text-sm font-medium text-background/90 leading-none">
+            {title}
+          </div>
+          <p className="line-clamp-2 text-sm leading-snug text-background/60">
             {children}
           </p>
         </Link>
@@ -157,3 +111,92 @@ const ListItem = React.forwardRef<
   );
 });
 ListItem.displayName = "ListItem";
+
+const LogoSvg = () => (
+  <svg
+    viewBox="0 0 80 80"
+    fill="none"
+    role="img"
+    xmlns="http://www.w3.org/2000/svg"
+    width="100"
+    height="100"
+  >
+    <mask
+      id=":rfm:"
+      mask-type="alpha"
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="80"
+      height="80"
+    >
+      <rect width="80" height="80" rx="160" fill="#FFFFFF"></rect>
+    </mask>
+    <g mask="url(#:rfm:)">
+      <rect width="10" height="10" fill="#0a0310"></rect>
+      <rect x="20" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="40" width="10" height="10" fill="#49007e"></rect>
+      <rect x="60" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="10" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="30" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="50" width="10" height="10" fill="#49007e"></rect>
+      <rect x="70" width="10" height="10" fill="#ffb238"></rect>
+      <rect y="10" width="10" height="10" fill="#ff005b"></rect>
+      <rect y="20" width="10" height="10" fill="#0a0310"></rect>
+      <rect y="30" width="10" height="10" fill="#ffb238"></rect>
+      <rect y="40" width="10" height="10" fill="#ffb238"></rect>
+      <rect y="50" width="10" height="10" fill="#0a0310"></rect>
+      <rect y="60" width="10" height="10" fill="#ff7d10"></rect>
+      <rect y="70" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="20" y="10" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="20" y="20" width="10" height="10" fill="#49007e"></rect>
+      <rect x="20" y="30" width="10" height="10" fill="#49007e"></rect>
+      <rect x="20" y="40" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="20" y="50" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="20" y="60" width="10" height="10" fill="#49007e"></rect>
+      <rect x="20" y="70" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="40" y="10" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="40" y="20" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="40" y="30" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="40" y="40" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="40" y="50" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="40" y="60" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="40" y="70" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="60" y="10" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="60" y="20" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="60" y="30" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="60" y="40" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="60" y="50" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="60" y="60" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="60" y="70" width="10" height="10" fill="#49007e"></rect>
+      <rect x="10" y="10" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="10" y="20" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="10" y="30" width="10" height="10" fill="#49007e"></rect>
+      <rect x="10" y="40" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="10" y="50" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="10" y="60" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="10" y="70" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="30" y="10" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="30" y="20" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="30" y="30" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="30" y="40" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="30" y="50" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="30" y="60" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="30" y="70" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="50" y="10" width="10" height="10" fill="#49007e"></rect>
+      <rect x="50" y="20" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="50" y="30" width="10" height="10" fill="#49007e"></rect>
+      <rect x="50" y="40" width="10" height="10" fill="#ffb238"></rect>
+      <rect x="50" y="50" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="50" y="60" width="10" height="10" fill="#49007e"></rect>
+      <rect x="50" y="70" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="70" y="10" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="70" y="20" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="70" y="30" width="10" height="10" fill="#0a0310"></rect>
+      <rect x="70" y="40" width="10" height="10" fill="#49007e"></rect>
+      <rect x="70" y="50" width="10" height="10" fill="#ff005b"></rect>
+      <rect x="70" y="60" width="10" height="10" fill="#ff7d10"></rect>
+      <rect x="70" y="70" width="10" height="10" fill="#ff005b"></rect>
+    </g>
+  </svg>
+);

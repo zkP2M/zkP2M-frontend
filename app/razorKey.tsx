@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useP2MContractWrite } from "@/contract";
-import { Check, Loader } from "lucide-react";
+import { Check, Loader, SquareUser } from "lucide-react";
 
 const formSchema = z.object({
   key: z.string(),
@@ -25,9 +25,11 @@ const formSchema = z.object({
 export const RazorKeyForm = ({
   label,
   description,
+  placeholder,
 }: {
   label?: string;
   description?: string;
+  placeholder?: string;
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +63,7 @@ export const RazorKeyForm = ({
             <FormItem>
               <FormLabel>{label || "Razorpay API Key"}</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Input placeholder={placeholder} {...field} />
               </FormControl>
               <FormDescription>
                 {description || "This is your Razorpay API key"}
@@ -70,22 +72,29 @@ export const RazorKeyForm = ({
             </FormItem>
           )}
         />
-        <Button
-          className="gap-2 w-full"
-          size="lg"
-          type="submit"
-          disabled={isLoading || isSuccess || !form.formState.isDirty}
-        >
-          {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
-          Submit
-        </Button>
 
-        {isSuccess ? (
-          <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
-            <Check className="w-4 h-4" />
-            Your registration is successful.
-          </p>
-        ) : null}
+        <div className="flex flex-col gap-6 items-center">
+          <Button
+            className="gap-2 w-fit"
+            size="lg"
+            type="submit"
+            disabled={isLoading || isSuccess || !form.formState.isDirty}
+          >
+            {isLoading ? (
+              <Loader className="animate-spin w-6 h-6" />
+            ) : (
+              <SquareUser className="w-6 h-6" />
+            )}
+            Register
+          </Button>
+
+          {isSuccess ? (
+            <p className="flex items-center gap-1 text-xl font-bold text-primary/90">
+              <Check className="w-6 h-6" />
+              Your registration is successful.
+            </p>
+          ) : null}
+        </div>
       </form>
     </Form>
   );
