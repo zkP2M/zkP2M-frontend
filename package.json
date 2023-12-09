@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:goerli": "env-cmd -f .env.goerli pnpm dev",
+    "dev:stage": "env-cmd -f .env.stage next dev",
     "build": "next build",
     "start": "next start",
-    "start:goerli": "env-cmd -f .env.goerli pnpm build && pnpm start",
+    "start:stage": "env-cmd -f .env.stage next dev",
     "lint": "next lint"
   },
   "dependencies": {

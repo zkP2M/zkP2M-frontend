@@ -22,7 +22,7 @@ const formSchema = z.object({
   key: z.string(),
 });
 
-export const RazorKeyForm = () => {
+export const RazorKeyForm = ({ label }: { label?: string }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,7 +53,7 @@ export const RazorKeyForm = () => {
           name="key"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Razorpay API Key</FormLabel>
+              <FormLabel>{label || "Razorpay API Key"}</FormLabel>
               <FormControl>
                 <Input placeholder="" {...field} />
               </FormControl>

@@ -1,28 +1,61 @@
-import { useContractRead, useWalletClient } from "wagmi";
+import { useContractRead, useNetwork, useWalletClient } from "wagmi";
 import ABI from "./abi.json";
 import { useState } from "react";
 import { prepareWriteContract, readContract, writeContract } from "@wagmi/core";
 import { useToast } from "@/components/ui/use-toast";
 import { ERR_MSG } from "@/lib/consts";
 
-export const P2M_CONTRACT_ADDRESS = process.env
-  .NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS as `0x${string}`;
-export const USDC_CONTRACT = process.env
-  .NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`;
+export const getP2MContractAddress = (chainId: number | undefined) => {
+  switch (chainId) {
+    case 1:
+      return process.env.NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_1 as `0x${string}`;
+    case 5:
+      return process.env.NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_5 as `0x${string}`;
+    case 42:
+      return process.env.NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_42 as `0x${string}`;
+    case 1337:
+      return process.env
+        .NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_1337 as `0x${string}`;
+    case 31337:
+      return process.env
+        .NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_31337 as `0x${string}`;
+    default:
+      return process.env.NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_1 as `0x${string}`;
+  }
+};
 
-console.log("ZKP2M: ", P2M_CONTRACT_ADDRESS);
-console.log("USDC: ", USDC_CONTRACT);
+export const getUSDCContractAddress = (chainId: number | undefined) => {
+  switch (chainId) {
+    case 1:
+      return process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS_1 as `0x${string}`;
+    case 5:
+      return process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS_5 as `0x${string}`;
+    case 42:
+      return process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS_42 as `0x${string}`;
+    case 1337:
+      return process.env
+        .NEXT_PUBLIC_USDC_CONTRACT_ADDRESS_1337 as `0x${string}`;
+    case 31337:
+      return process.env
+        .NEXT_PUBLIC_USDC_CONTRACT_ADDRESS_31337 as `0x${string}`;
+    default:
+      return process.env.NEXT_PUBLIC_ZKP2M_CONTRACT_ADDRESS_1 as `0x${string}`;
+  }
+};
 
 export const useP2MContractRead = (
   functionName: string,
-  { args, enabled }: any
+  { args, enabled, watch }: any
 ) => {
+  const { chain } = useNetwork();
+
   return useContractRead({
-    address: P2M_CONTRACT_ADDRESS,
+    address: getP2MContractAddress(chain?.id),
     abi: ABI.abi,
     functionName,
     args,
     enabled,
+    watch,
   });
 };
 
@@ -45,6 +78,8 @@ export const useP2MContractWrite = (
 
   const { toast } = useToast();
 
+  const { chain } = useNetwork();
+
   const writeAsync = async (args: any[]) => {
     setLoading(true);
 
@@ -54,7 +89,7 @@ export const useP2MContractWrite = (
       }
 
       const config = await prepareWriteContract({
-        address: P2M_CONTRACT_ADDRESS,
+        address: getP2MContractAddress(chain?.id),
         abi: ABI.abi,
         functionName,
         args,
@@ -115,10 +150,12 @@ export const useP2MContractWrite = (
 };
 
 export const useReadDynamicP2MContract = (functionName: string) => {
+  const { chain } = useNetwork();
+
   const readAsync = async (args: any[]) => {
     try {
       const data = await readContract({
-        address: P2M_CONTRACT_ADDRESS,
+        address: getP2MContractAddress(chain?.id),
         abi: ABI.abi,
         functionName,
         args,

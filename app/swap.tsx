@@ -32,6 +32,7 @@ export const Swap = () => {
     {
       args: [Number(usd) * Math.pow(10, 6)],
       enabled: !!usd,
+      watch: true,
     }
   );
 

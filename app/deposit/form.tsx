@@ -15,10 +15,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { P2M_CONTRACT_ADDRESS, useP2MContractWrite } from "@/contract";
+import {
+  getP2MContractAddress,
+  getUSDCContractAddress,
+  useP2MContractWrite,
+} from "@/contract";
 import { Check, Loader } from "lucide-react";
-import { useMemo, useState } from "react";
-import { erc20ABI, useAccount, useContractRead, useContractWrite } from "wagmi";
+import { useMemo } from "react";
+import {
+  erc20ABI,
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  useNetwork,
+} from "wagmi";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -162,16 +172,20 @@ export const DepositForm = () => {
 
 const useAllowance = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const {
     data,
     isLoading: isAllowanceLoading,
     refetch,
   } = useContractRead({
-    address: process.env.NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`,
+    address: getUSDCContractAddress(chain?.id),
     abi: erc20ABI,
     functionName: "allowance",
-    args: [address as unknown as `0x${string}`, P2M_CONTRACT_ADDRESS],
+    args: [
+      address as unknown as `0x${string}`,
+      getP2MContractAddress(chain?.id),
+    ],
     watch: true,
   });
 
@@ -185,7 +199,7 @@ const useAllowance = () => {
 
   const { writeAsync: usdcWriteAsync, isLoading: isApproving } =
     useContractWrite({
-      address: process.env.NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`,
+      address: getUSDCContractAddress(chain?.id),
       abi: erc20ABI,
       functionName: "approve",
     });
@@ -196,7 +210,10 @@ const useAllowance = () => {
     console.log("allowance");
     try {
       await usdcWriteAsync({
-        args: [P2M_CONTRACT_ADDRESS, BigInt(amount * Math.pow(10, 6))],
+        args: [
+          getP2MContractAddress(chain?.id),
+          BigInt(amount * Math.pow(10, 6)),
+        ],
       });
 
       toast({
