@@ -38,7 +38,7 @@ export const RazorKeyForm = () => {
     console.log(values);
 
     const key = values.key;
-    const formattedKey = key.replace("rzp_test_", "");
+    const formattedKey = key.replace("rzp_test_", "").replace("rzp_live_", "");
 
     const res = await writeAsync([formattedKey]);
 

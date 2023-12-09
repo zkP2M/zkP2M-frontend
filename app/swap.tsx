@@ -14,7 +14,7 @@ import { useAccount } from "wagmi";
 import { Check, Loader } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
 
-const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
+const RAZOR_API_KEY = process.env.NEXT_PUBLIC_KEY_ID;
 
 export const Swap = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -107,7 +107,11 @@ export const Swap = () => {
         return;
       }
 
-      const args = [depositerId, usd, address];
+      const args = [
+        depositerId, 
+        Number(usd) * Math.pow(10, 6), 
+        address
+      ];
       const writeRes = await writeAsync(args);
 
       console.log("signalIntent", writeRes);

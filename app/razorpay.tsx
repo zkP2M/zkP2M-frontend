@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 
-const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
+const RAZOR_API_KEY = process.env.NEXT_PUBLIC_KEY_ID;
 
 export const RazorPay = () => {
   const [Razorpay] = useRazorpay();

@@ -15,16 +15,17 @@ import {
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { hardhat, scroll } from "wagmi/chains";
+import { goerli, hardhat, scroll } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import { Header } from "./header";
 
 const queryClient = new QueryClient();
 
 const { chains, publicClient } = configureChains(
-  [scroll, hardhat],
+  [scroll, hardhat, goerli],
   [
-    // alchemyProvider({ apiKey: process.env.ALCHEMY_ID as string }),
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string }),
     publicProvider(),
   ]
 );
