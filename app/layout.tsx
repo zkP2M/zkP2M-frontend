@@ -1,9 +1,11 @@
 "use client";
 
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
+
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -13,12 +15,13 @@ import {
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum, base, zora } from "wagmi/chains";
-import { alchemyProvider } from "wagmi/providers/alchemy";
+import { scroll } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
+const queryClient = new QueryClient();
+
 const { chains, publicClient } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, base, zora],
+  [scroll],
   [
     // alchemyProvider({ apiKey: process.env.ALCHEMY_ID as string }),
     publicProvider(),
@@ -54,9 +57,13 @@ export default function RootLayout({
       >
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider chains={chains} theme={darkTheme()}>
-            {children}
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
           </RainbowKitProvider>
         </WagmiConfig>
+
+        <Toaster />
       </body>
     </html>
   );

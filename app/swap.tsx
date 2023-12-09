@@ -2,11 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useP2MContractRead } from "@/contract";
+import { useMemo, useState } from "react";
 
 export const Swap = () => {
-  const onUSDChange = () => {};
+  const [usd, setUSD] = useState<number | undefined>(undefined);
 
-  const onINRChange = () => {};
+  const { data } = useP2MContractRead("getDepositWithId");
+
+  const inrValue = useMemo(() => {
+    return undefined;
+  }, [data]);
 
   const onIntent = () => {
     console.log("onIntent");
@@ -24,6 +30,8 @@ export const Swap = () => {
               type="number"
               className="border-0 focus:active:focus-visible:border-0 text-4xl font-bold px-0 focus:ring-0 active:ring-0 focus-visible:ring-0"
               placeholder="0"
+              value={usd}
+              onChange={(e) => setUSD(Number(e.target.value) || undefined)}
             />
           </div>
 
@@ -39,6 +47,8 @@ export const Swap = () => {
               type="number"
               className="border-0 focus:active:focus-visible:border-0 text-4xl font-bold px-0 focus:ring-0 active:ring-0 focus-visible:ring-0"
               placeholder="0"
+              value={inrValue}
+              disabled
             />
           </div>
 

@@ -15,13 +15,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { state } from "./state";
+import { useP2MContractWrite } from "@/contract";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   key: z.string(),
 });
 
 export const RazerKey = () => {
+  const { isLoading, isError, write, writeAsync } =
+    useP2MContractWrite("register");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,11 +33,15 @@ export const RazerKey = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
     // update state
-    state.razerKey = values.key;
+    // state.razerKey = values.key;
+
+    const args = [0, 0, 0, values.key];
+
+    // await writeAsync(args);
   };
 
   return (
@@ -44,7 +52,7 @@ export const RazerKey = () => {
           name="key"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Razer Key</FormLabel>
+              <FormLabel>Razer API Key</FormLabel>
               <FormControl>
                 <Input placeholder="shadcn" {...field} />
               </FormControl>
@@ -53,7 +61,10 @@ export const RazerKey = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isLoading || !form.formState.isDirty}>
+          {isLoading ? <Loader className="animate-spin" /> : null}
+          Submit
+        </Button>
       </form>
     </Form>
   );
