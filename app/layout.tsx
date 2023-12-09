@@ -21,6 +21,7 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { Header } from "./header";
 
 import localFont from "next/font/local";
+import { Footer } from "./footer";
 
 const queryClient = new QueryClient();
 
@@ -68,10 +69,14 @@ export default function RootLayout({
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider chains={chains} theme={darkTheme()}>
             <QueryClientProvider client={queryClient}>
-              <Header />
+              <div className="flex flex-col w-full min-h-screen h-full">
+                <Header />
 
-              <div className="max-w-xl mx-auto flex flex-col gap-6 mt-20">
-                {children}
+                <div className="max-w-xl mx-auto flex flex-col gap-6 mt-20">
+                  {children}
+                </div>
+
+                <Footer />
               </div>
             </QueryClientProvider>
           </RainbowKitProvider>
