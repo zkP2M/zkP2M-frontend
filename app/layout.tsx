@@ -17,6 +17,7 @@ import {
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { scroll } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { Header } from "./header";
 
 const queryClient = new QueryClient();
 
@@ -58,7 +59,11 @@ export default function RootLayout({
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider chains={chains} theme={darkTheme()}>
             <QueryClientProvider client={queryClient}>
-              {children}
+              <Header />
+
+              <div className="max-w-xl mx-auto flex flex-col gap-6">
+                {children}
+              </div>
             </QueryClientProvider>
           </RainbowKitProvider>
         </WagmiConfig>

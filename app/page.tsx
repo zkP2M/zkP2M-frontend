@@ -12,14 +12,8 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Header />
-
-      <div className="max-w-xl mx-auto flex flex-col gap-6">
-        {/* <RazerKey /> */}
-
-        <Swap />
-        <RazorPay />
-      </div>
+      <Swap />
+      <RazorPay />
     </>
   );
 
