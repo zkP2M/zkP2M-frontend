@@ -15,8 +15,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useP2MContractWrite } from "@/contract";
+import { P2M_CONTRACT_ADDRESS, useP2MContractWrite } from "@/contract";
 import { Loader } from "lucide-react";
+import { useMemo, useState } from "react";
+import { erc20ABI, useAccount, useContractRead, useContractWrite } from "wagmi";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   upiId: z.string(),
@@ -25,6 +29,8 @@ const formSchema = z.object({
 });
 
 export const DepositForm = () => {
+  const { isAllowed, allow, isAllowanceLoading, isApproving } = useAllowance();
+
   const { isLoading, isError, isSuccess, error, writeAsync } =
     useP2MContractWrite("offRamp");
 
@@ -41,84 +47,162 @@ export const DepositForm = () => {
     console.log(values);
 
     const args = [
-      //   values.upiId,
-      //   values.amount.toString(),
-      //   values.receiveAmount.toString(),
-
-      "sachin@paytm",
-      "10000000",
-      "830000000",
+      values.upiId,
+      String(Number(values.amount) * Math.pow(10, 6)),
+      String(Number(values.receiveAmount) * Math.pow(10, 6)),
     ];
 
     await writeAsync(args);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="upiId"
-          rules={{
-            required: "UPI Id is required",
-          }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>UPI Id</FormLabel>
-              <FormControl>
-                <Input placeholder="denosaurabh@paytm" {...field} />
-              </FormControl>
-              <FormDescription>This is your UPI Id.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="upiId"
+            rules={{
+              required: "UPI Id is required",
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>UPI Id</FormLabel>
+                <FormControl>
+                  <Input placeholder="denosaurabh@paytm" {...field} />
+                </FormControl>
+                <FormDescription>This is your UPI Id.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="amount"
-          rules={{
-            required: "Amount is required",
-          }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="100" {...field} />
-              </FormControl>
-              <FormDescription>This is your amount.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="amount"
+            rules={{
+              required: "Amount is required",
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Amount</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="100" {...field} />
+                </FormControl>
+                <FormDescription>This is your amount.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="receiveAmount"
-          rules={{
-            required: "Receive Amount is required",
-          }}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Receive Amount</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="100" {...field} />
-              </FormControl>
-              <FormDescription>This is your receive amount.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="receiveAmount"
+            rules={{
+              required: "Receive Amount is required",
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Receive Amount</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="100" {...field} />
+                </FormControl>
+                <FormDescription>This is your receive amount.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          <Button
+            type="submit"
+            className={cn(
+              "gap-2",
+              !window
+                ? ""
+                : isAllowed && !isAllowanceLoading
+                ? "flex"
+                : "hidden"
+            )}
+            disabled={isLoading || isSuccess || !form.formState.isDirty}
+          >
+            {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
+            Submit
+          </Button>
+        </form>
+      </Form>
+
+      {!isAllowed && !isAllowanceLoading ? (
         <Button
-          type="submit"
           className="gap-2"
-          disabled={isLoading || isSuccess || !form.formState.isDirty}
+          disabled={isAllowed || isApproving || isAllowanceLoading}
+          onClick={() => allow(10)}
         >
-          {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
-          Submit
+          {isApproving ? <Loader className="animate-spin w-4 h-4" /> : null}
+          Allow
         </Button>
-      </form>
-    </Form>
+      ) : null}
+
+      <div>
+        {isAllowanceLoading ? (
+          <Loader className="animate-spin w-4 h-4" />
+        ) : null}
+      </div>
+    </>
   );
+};
+
+const useAllowance = () => {
+  const { address } = useAccount();
+
+  const {
+    data,
+    isLoading: isAllowanceLoading,
+    refetch,
+  } = useContractRead({
+    address: process.env.NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`,
+    abi: erc20ABI,
+    functionName: "allowance",
+    args: [address as unknown as `0x${string}`, P2M_CONTRACT_ADDRESS],
+    watch: true,
+  });
+
+  const isAllowed = useMemo(() => {
+    if (data && data > BigInt(0)) {
+      return true;
+    }
+
+    return false;
+  }, [data]);
+
+  const { writeAsync: usdcWriteAsync, isLoading: isApproving } =
+    useContractWrite({
+      address: process.env.NEXT_PUBLIC_USDC_CONTRACT as `0x${string}`,
+      abi: erc20ABI,
+      functionName: "approve",
+    });
+
+  const { toast } = useToast();
+
+  const handleAllowance = async (amount: number) => {
+    console.log("allowance");
+    try {
+      await usdcWriteAsync({
+        args: [P2M_CONTRACT_ADDRESS, BigInt(amount * Math.pow(10, 6))],
+      });
+
+      toast({
+        title: "Token approved",
+        variant: "accent",
+      });
+
+      refetch();
+    } catch {}
+  };
+
+  return {
+    isAllowanceLoading,
+    isAllowed,
+    isApproving,
+    allow: handleAllowance,
+  };
 };

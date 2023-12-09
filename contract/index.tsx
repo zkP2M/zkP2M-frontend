@@ -5,6 +5,8 @@ import { prepareWriteContract, writeContract } from "@wagmi/core";
 import { useToast } from "@/components/ui/use-toast";
 import { ERR_MSG } from "@/lib/consts";
 
+export const USDC_CONTRACT = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+
 export const P2M_CONTRACT_ADDRESS =
   "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 

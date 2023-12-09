@@ -7,6 +7,7 @@ import { useP2MContractRead, useP2MContractWrite } from "@/contract";
 import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
+import { BigNumber } from "ethers";
 
 const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
 
@@ -27,8 +28,27 @@ export const Swap = () => {
   const [Razorpay] = useRazorpay();
 
   const inrValue = useMemo(() => {
-    console.log("INR", data);
-    return undefined;
+    if (!data) return 0;
+
+    console.log("d", data);
+
+    const DOLLAR_TO_INR = 83;
+    const num = (data as any)[1] as unknown as BigInt;
+
+    console.log(
+      "d",
+      BigNumber.from(num)
+        .mul(BigNumber.from(DOLLAR_TO_INR))
+        .div(BigNumber.from(10).pow(18))
+        .toNumber()
+    );
+
+    const inr = BigNumber.from(num)
+      .mul(BigNumber.from(DOLLAR_TO_INR))
+      .div(BigNumber.from(10).pow(18))
+      .toNumber();
+
+    return inr;
   }, [data]);
 
   const onCreateOrderClick = useCallback(async () => {

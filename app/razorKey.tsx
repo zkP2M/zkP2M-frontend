@@ -69,6 +69,12 @@ export const RazerKey = () => {
           {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
           Submit
         </Button>
+
+        {isSuccess ? (
+          <p className="text-sm font-medium text-foreground/80">
+            Your registration is successful.
+          </p>
+        ) : null}
       </form>
     </Form>
   );
