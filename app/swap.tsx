@@ -48,12 +48,14 @@ export const Swap = () => {
 
     const num = (data as any)[1] as unknown as BigInt;
 
-    const inr = BigNumber.from(usd)
-      .mul(BigNumber.from(num))
-      .div(BigNumber.from(10).pow(18))
-      .toNumber();
+    const USD_INR = 83.43;
 
-    return inr;
+    // const inr = BigNumber.from(usd)
+    // .mul(BigNumber.from(num))
+    // .div(BigNumber.from(10).pow(18))
+    // .toNumber();
+
+    return (Number(usd) * USD_INR).toFixed(2);
   }, [data]);
 
   const onCreateOrderClick = useCallback(async () => {
@@ -111,7 +113,7 @@ export const Swap = () => {
       const res = await fetch(`/order`, {
         method: "POST",
         body: JSON.stringify({
-          amount: 3000,
+          amount: inrValue,
           currency: "INR",
           id: intentHash,
           recepient: (depositor as any).upiId,
