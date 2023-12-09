@@ -30,22 +30,17 @@ export const RazerKey = () => {
     },
   });
 
-  const razorKey = form.watch("key");
-  const { isLoading, isError, error, isSuccess, writeAsync, data } =
-    useP2MContractWrite("register");
+  const { isLoading, isSuccess, writeAsync } = useP2MContractWrite(
+    "registerWithoutProof"
+  );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
-    const res = await writeAsync([
-      [0, 0],
-      [
-        [0, 0],
-        [0, 0],
-      ],
-      [0, 0],
-      [razorKey],
-    ]);
+    const key = values.key;
+    const formattedKey = key.replace("rzp_test_", "");
+
+    const res = await writeAsync([formattedKey]);
 
     console.log("register", res);
   };
