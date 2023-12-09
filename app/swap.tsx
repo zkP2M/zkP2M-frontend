@@ -9,6 +9,7 @@ import useRazorpay, { RazorpayOptions } from "react-razorpay";
 import { useAccount } from "wagmi";
 import { BigNumber } from "ethers";
 import { Loader } from "lucide-react";
+import { ERR_MSG } from "@/lib/consts";
 
 const RAZOR_API_KEY = "rzp_test_c4bTc9bMwdE8xe";
 
@@ -99,8 +100,8 @@ export const Swap = () => {
       // 4) do payment
       const options: RazorpayOptions = {
         key: RAZOR_API_KEY,
-        amount: usd.toString(),
-        currency: "USD",
+        amount: inrValue.toString(),
+        currency: "INR",
         name: "ZKP2M",
         description: "Transaction",
         order_id: order.id,
@@ -115,8 +116,22 @@ export const Swap = () => {
       const rzpay = new Razorpay(options);
       rzpay.open();
 
+      toast({
+        title: "Swap successfull",
+        description: ERR_MSG,
+        variant: "accent",
+      });
+
       // 5) pass to webhook
-    } catch (err) {}
+    } catch (err) {
+      console.log("onCreateOrderClick", err);
+
+      toast({
+        title: "Swap failed",
+        description: ERR_MSG,
+        variant: "destructive",
+      });
+    }
   }, [Razorpay, usd]);
 
   return (

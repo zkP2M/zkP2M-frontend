@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { P2M_CONTRACT_ADDRESS, useP2MContractWrite } from "@/contract";
-import { Loader } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { useMemo, useState } from "react";
 import { erc20ABI, useAccount, useContractRead, useContractWrite } from "wagmi";
 import { useToast } from "@/components/ui/use-toast";
@@ -115,8 +115,9 @@ export const DepositForm = () => {
 
           <Button
             type="submit"
+            size="lg"
             className={cn(
-              "gap-2",
+              "gap-2 w-full",
               !window
                 ? ""
                 : isAllowed && !isAllowanceLoading
@@ -128,12 +129,20 @@ export const DepositForm = () => {
             {isLoading ? <Loader className="animate-spin w-4 h-4" /> : null}
             Submit
           </Button>
+
+          {isSuccess ? (
+            <p className="flex items-center gap-1 text-sm font-medium text-primary/90">
+              <Check className="w-4 h-4" />
+              Your deposit is successful.
+            </p>
+          ) : null}
         </form>
       </Form>
 
       {!isAllowed && !isAllowanceLoading ? (
         <Button
           className="gap-2"
+          size="lg"
           disabled={isAllowed || isApproving || isAllowanceLoading}
           onClick={() => allow(10)}
         >
