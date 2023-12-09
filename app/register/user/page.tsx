@@ -7,7 +7,7 @@ const Register = () => {
         User Registration
       </h1>
 
-      <RazorKeyForm label="User Name" />
+      <RazorKeyForm label="User Name" description="This is your user name" />
     </div>
   );
 };
