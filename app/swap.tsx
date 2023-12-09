@@ -65,7 +65,7 @@ export const Swap = () => {
 
       const depositerId = (data as any)?.[0] as unknown as BigInt;
 
-      if (!depositerId) {
+      if (depositerId === undefined) {
         setIsActionLoading(false);
 
         toast({
