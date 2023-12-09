@@ -108,11 +108,7 @@ export const Swap = () => {
         return;
       }
 
-      const args = [
-        depositerId, 
-        Number(usd) * Math.pow(10, 6), 
-        address
-      ];
+      const args = [depositerId, Number(usd) * Math.pow(10, 6), address];
       const writeRes = await writeAsync(args);
 
       console.log("signalIntent", writeRes);
@@ -156,7 +152,7 @@ export const Swap = () => {
       }
 
       const options: RazorpayOptions = {
-        key: RAZOR_API_KEY,
+        key: `${RAZOR_API_KEY}`,
         amount: inrValue.toString(),
         currency: "INR",
         name: "ZKP2M",

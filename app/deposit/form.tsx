@@ -21,7 +21,7 @@ import {
   useP2MContractWrite,
 } from "@/contract";
 import { Check, Loader } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   erc20ABI,
   useAccount,
@@ -31,6 +31,7 @@ import {
 } from "wagmi";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { waitForTransaction } from "@wagmi/core";
 
 const formSchema = z.object({
   upiId: z.string(),
@@ -154,7 +155,7 @@ export const DepositForm = () => {
           className="gap-2"
           size="lg"
           disabled={isAllowed || isApproving || isAllowanceLoading}
-          onClick={() => allow(10)}
+          onClick={() => allow(100)}
         >
           {isApproving ? <Loader className="animate-spin w-4 h-4" /> : null}
           Allow
@@ -171,6 +172,8 @@ export const DepositForm = () => {
 };
 
 const useAllowance = () => {
+  const [isApproving, setIsApproving] = useState(false);
+
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -197,32 +200,45 @@ const useAllowance = () => {
     return false;
   }, [data]);
 
-  const { writeAsync: usdcWriteAsync, isLoading: isApproving } =
-    useContractWrite({
-      address: getUSDCContractAddress(chain?.id),
-      abi: erc20ABI,
-      functionName: "approve",
-    });
+  const { writeAsync: usdcWriteAsync } = useContractWrite({
+    address: getUSDCContractAddress(chain?.id),
+    abi: erc20ABI,
+    functionName: "approve",
+  });
 
   const { toast } = useToast();
 
   const handleAllowance = async (amount: number) => {
+    setIsApproving(true);
+
     console.log("allowance");
     try {
-      await usdcWriteAsync({
+      const res = await usdcWriteAsync({
         args: [
           getP2MContractAddress(chain?.id),
           BigInt(amount * Math.pow(10, 6)),
         ],
       });
 
+      if (res?.hash) {
+        await waitForTransaction({
+          hash: res?.hash,
+        });
+      }
+
       toast({
         title: "Token approved",
         variant: "accent",
       });
 
+      setIsApproving(false);
+
       refetch();
-    } catch {}
+    } catch {
+      setIsApproving(false);
+    }
+
+    setIsApproving(false);
   };
 
   return {

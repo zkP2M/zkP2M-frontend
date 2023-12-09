@@ -1,7 +1,12 @@
 import { useContractRead, useNetwork, useWalletClient } from "wagmi";
 import ABI from "./abi.json";
 import { useState } from "react";
-import { prepareWriteContract, readContract, writeContract } from "@wagmi/core";
+import {
+  prepareWriteContract,
+  readContract,
+  waitForTransaction,
+  writeContract,
+} from "@wagmi/core";
 import { useToast } from "@/components/ui/use-toast";
 import { ERR_MSG } from "@/lib/consts";
 
@@ -96,6 +101,12 @@ export const useP2MContractWrite = (
       });
 
       const res = await writeContract(config);
+
+      if (res?.hash) {
+        await waitForTransaction({
+          hash: res.hash,
+        });
+      }
 
       // const { request } = await publicClient.simulateContract({
       //   address: P2M_CONTRACT_ADDRESS,
