@@ -80,7 +80,7 @@ export default function RootLayout({
                 <Header />
                 {/* </div> */}
 
-                <div className="max-w-xl mx-auto flex flex-col gap-6 mt-4">
+                <div className="w-full max-w-2xl px-4 mb-6 mx-auto flex flex-col gap-6 mt-4">
                   {children}
                 </div>
 

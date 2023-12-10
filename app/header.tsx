@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/navigation-menu";
 
 export const Header = () => (
-  <header className="flex items-center justify-between p-8">
+  <header className="flex items-center justify-between p-8 flex-col gap-6 lg:flex-row">
     <div className="flex items-center gap-6">
       <Link
         className="text-2xl font-bold transition-all hover:text-foreground hover:scale-105 hover:shadow-xl hover:-translate-y-1 rounded-full active:translate-y-0.5 active:scale-95"

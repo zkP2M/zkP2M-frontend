@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="max-w-[700px]">
+    <div className="w-full">
       {/* <div className="p-12 rounded-xl border-[20px] border-foreground/10"> */}
       <Swap />
       {/* </div> */}
