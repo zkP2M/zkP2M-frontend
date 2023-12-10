@@ -34,8 +34,8 @@ const { chains, publicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
+  appName: "ZKP2M",
+  projectId: "459d5c157295ebdfe3ad924728ac582c",
   chains,
 });
 
@@ -69,14 +69,24 @@ export default function RootLayout({
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider chains={chains} theme={darkTheme()}>
             <QueryClientProvider client={queryClient}>
-              <div className="flex flex-col w-full min-h-screen h-full">
-                <Header />
+              <div className="flex flex-col w-full min-h-[calc(100vh+1px)] h-full">
+                <div className="border-b border-b-foreground/40 flex justify-center bg-foreground/10">
+                  <h1 className="font-black text-foreground/90 text-2xl py-4">
+                    ZKP2M
+                  </h1>
+                </div>
 
-                <div className="max-w-xl mx-auto flex flex-col gap-6 mt-20">
+                {/* <div className="border-b border-b-foreground/40"> */}
+                <Header />
+                {/* </div> */}
+
+                <div className="max-w-xl mx-auto flex flex-col gap-6 mt-4">
                   {children}
                 </div>
 
-                <Footer />
+                <div className="border-t border-t-foreground/40 mt-auto">
+                  <Footer />
+                </div>
               </div>
             </QueryClientProvider>
           </RainbowKitProvider>

@@ -17,9 +17,30 @@ import { waitForTransaction } from "@wagmi/core";
 
 const RAZOR_API_KEY = process.env.NEXT_PUBLIC_KEY_ID;
 
+type Actions = {
+  steps: string[];
+  finished?: boolean;
+};
+
 export const Swap = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isActionSuccess, setIsActionSuccess] = useState(false);
+
+  const [actions, setActions] = useState<Actions>({
+    steps: [],
+    finished: false,
+  });
+
+  const addNewAction = useCallback(
+    (step: string) => {
+      setActions((prev) => ({ ...prev, steps: [...prev.steps, step] }));
+    },
+    [setActions]
+  );
+
+  const finishActions = useCallback(() => {
+    setActions((prev) => ({ ...prev, finished: true }));
+  }, []);
 
   const [usd, setUSD] = useState<number | string>("");
 
@@ -65,6 +86,8 @@ export const Swap = () => {
   }, [data]);
 
   const onCreateOrderClick = useCallback(async () => {
+    setActions({ steps: [], finished: false });
+
     try {
       setIsActionLoading(true);
 
@@ -85,8 +108,12 @@ export const Swap = () => {
         return;
       }
 
+      addNewAction("Getting a Depositor");
+
       const depositor = await readDepositor([depositerId]);
       console.log("depositor", depositor);
+
+      // ACTION
 
       if (!usd) {
         setIsActionLoading(false);
@@ -112,6 +139,10 @@ export const Swap = () => {
         return;
       }
 
+      addNewAction(
+        `Sending a transaction for signal intent with depositor id: ${depositerId}`
+      );
+
       const args = [depositerId, Number(usd) * Math.pow(10, 6), address];
       const writeRes = await writeAsync(args);
 
@@ -123,14 +154,20 @@ export const Swap = () => {
         return;
       }
 
+      addNewAction("wait for transaction to mine");
+
       await waitForTransaction({
         hash: writeRes?.hash,
       });
+
+      addNewAction("fetch intent hash");
 
       // 2) get intentHash & depositor
       // const intentHash = writeRes.hash;
       const intentHash = await readIntentHash([address]);
       console.log("intentHash", intentHash);
+
+      addNewAction(`create order with hash: ${intentHash}`);
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
@@ -180,6 +217,8 @@ export const Swap = () => {
             variant: "accent",
           });
 
+          addNewAction(`send webhook`);
+
           // 5) pass to webhook
           fetch("https://proof.codes/zk", {
             mode: "no-cors",
@@ -198,6 +237,8 @@ export const Swap = () => {
         },
       };
 
+      addNewAction(`open payment model`);
+
       const rzpay = new Razorpay(options);
       rzpay.open();
 
@@ -215,11 +256,14 @@ export const Swap = () => {
     }
 
     setIsActionLoading(false);
+    finishActions();
   }, [Razorpay, usd]);
 
   return (
     <div className="flex flex-col gap-7">
-      <h6 className="text-4xl font-black">Swap</h6>
+      <h6 className="text-4xl font-black px-2 py-3 bg-foreground/5 rounded-sm w-fit">
+        Swap
+      </h6>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between p-6 w-full h-24 rounded-lg border-2 border-foreground/30 text-foreground/70 focus-within:border-foreground/60 focus-within:text-foreground/80 transition-all shadow-md">
@@ -287,6 +331,30 @@ export const Swap = () => {
             <Check className="w-4 h-4" />
             Your swap is successful.
           </p>
+        ) : null}
+      </div>
+
+      <div className="flex flex-col gap-1 mb-12">
+        {actions.steps.map((step, index) => (
+          <div
+            key={index}
+            className="w-full border border-foreground/30 bg-foreground/5 p-2 rounded-lg flex items-center gap-2 overflow-hidden"
+          >
+            {index === actions.steps.length && !actions.finished ? (
+              <Loader className="animate-spin w-6 h-6" />
+            ) : (
+              <Check className="w-6 h-6 min-w-[1.5rem]" />
+            )}
+            <p className="text-emerald-800 font-bold">{step}</p>
+          </div>
+        ))}
+
+        {isError ? (
+          <div className="w-full border border-foreground/30 bg-foreground/5 p-2 rounded-lg flex items-center gap-2">
+            <p className="text-destructive font-bold">
+              Error processing order transaction!
+            </p>
+          </div>
         ) : null}
       </div>
     </div>

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <div className="w-full mt-auto p-5 flex">
+    <div className="w-full p-5 flex">
       <div />
 
       <div className="flex items-center gap-4 ml-auto">

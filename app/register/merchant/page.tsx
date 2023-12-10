@@ -2,8 +2,8 @@ import { RazorKeyForm } from "@/app/razorKey";
 
 const Register = () => {
   return (
-    <div className="flex flex-col gap-12 min-w-[500px]">
-      <h1 className="text-4xl font-black text-foreground/80">
+    <div className="flex flex-col gap-12 min-w-[700px]">
+      <h1 className="text-4xl font-black text-foreground px-2 py-3 bg-foreground/5 rounded-sm w-fit">
         Merchant Registration
       </h1>
 

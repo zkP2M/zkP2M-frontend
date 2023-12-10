@@ -1,8 +1,5 @@
-import Image from "next/image";
-import { Header } from "./header";
 import { Metadata } from "next";
 import { Swap } from "./swap";
-import { RazorPay } from "./razorpay";
 
 export const metadata: Metadata = {
   title: "ZK P2M",
@@ -11,9 +8,10 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="max-w-[500px]">
+    <div className="max-w-[700px]">
+      {/* <div className="p-12 rounded-xl border-[20px] border-foreground/10"> */}
       <Swap />
-      {/* <RazorPay /> */}
+      {/* </div> */}
     </div>
   );
 }
