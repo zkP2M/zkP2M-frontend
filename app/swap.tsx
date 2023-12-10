@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import {
+  getP2MContractAddress,
   useP2MContractRead,
   useP2MContractWrite,
   useReadDynamicP2MContract,
 } from "@/contract";
 import { useCallback, useMemo, useState } from "react";
 import useRazorpay, { RazorpayOptions } from "react-razorpay";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { Check, Loader, ShuffleIcon } from "lucide-react";
 import { ERR_MSG } from "@/lib/consts";
 import { waitForTransaction } from "@wagmi/core";
@@ -25,6 +26,8 @@ type Actions = {
 export const Swap = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [isActionSuccess, setIsActionSuccess] = useState(false);
+
+  const { chain } = useNetwork();
 
   const [actions, setActions] = useState<Actions>({
     steps: [],
@@ -229,6 +232,12 @@ export const Swap = () => {
 
           setIsActionLoading(false);
           setIsActionSuccess(true);
+
+          addNewAction(
+            `Transaction: ${`https://goerli.etherscan.io/${getP2MContractAddress(
+              chain?.id
+            )}`} `
+          );
         },
         notes: {
           id: intentHash,
