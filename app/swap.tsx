@@ -94,7 +94,8 @@ export const Swap = () => {
       // 1) call signalIntent
       console.log("data", data);
 
-      const depositerId = (data as any)?.[0] as unknown as BigInt;
+      const depositerId =
+        ((data as any)?.[0] as unknown as BigInt) || BigInt(0);
 
       if (depositerId === undefined) {
         setIsActionLoading(false);

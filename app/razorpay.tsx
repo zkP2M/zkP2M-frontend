@@ -25,7 +25,7 @@ export const RazorPay = () => {
     const order = { id: resJson.orderId };
 
     const options: RazorpayOptions = {
-      key: RAZOR_API_KEY,
+      key: RAZOR_API_KEY as string,
       amount: "3000",
       currency: "INR",
       name: "Acme Corp",
