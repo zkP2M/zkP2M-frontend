@@ -109,7 +109,7 @@ export const Swap = () => {
         return;
       }
 
-      addNewAction("Getting a Depositor");
+      addNewAction("Fetching the best depositor");
 
       const depositor = await readDepositor([depositerId]);
       console.log("depositor", depositor);
@@ -140,9 +140,7 @@ export const Swap = () => {
         return;
       }
 
-      addNewAction(
-        `Sending a transaction for signal intent with depositor id: ${depositerId}`
-      );
+      addNewAction(`Creating an order against depositor id: ${depositerId}`);
 
       const args = [depositerId, Number(usd) * Math.pow(10, 6), address];
       const writeRes = await writeAsync(args);
@@ -155,20 +153,20 @@ export const Swap = () => {
         return;
       }
 
-      addNewAction("wait for transaction to mine");
+      addNewAction("waiting for transaction to mine");
 
       await waitForTransaction({
         hash: writeRes?.hash,
       });
 
-      addNewAction("fetch intent hash");
+      // addNewAction("fetch intent hash");
 
       // 2) get intentHash & depositor
       // const intentHash = writeRes.hash;
       const intentHash = await readIntentHash([address]);
       console.log("intentHash", intentHash);
 
-      addNewAction(`create order with hash: ${intentHash}`);
+      addNewAction(`create Razorpay order`); // with hash: ${intentHash}
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
@@ -218,7 +216,7 @@ export const Swap = () => {
             variant: "accent",
           });
 
-          addNewAction(`send webhook`);
+          addNewAction(`payment successfull, generating proof (15 seconds).`);
 
           // 5) pass to webhook
           fetch("https://proof.codes/zk", {
@@ -238,7 +236,7 @@ export const Swap = () => {
         },
       };
 
-      addNewAction(`open payment model`);
+      addNewAction(`open payment gateway`);
 
       const rzpay = new Razorpay(options);
       rzpay.open();
