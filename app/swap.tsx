@@ -234,7 +234,7 @@ export const Swap = () => {
           setIsActionSuccess(true);
 
           addNewAction(
-            `Transaction: ${`https://goerli.etherscan.io/${getP2MContractAddress(
+            `Contract: ${`https://goerli.etherscan.io/${getP2MContractAddress(
               chain?.id
             )}`} `
           );
