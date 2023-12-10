@@ -153,7 +153,7 @@ export const Swap = () => {
         return;
       }
 
-      addNewAction("waiting for transaction to mine");
+      addNewAction("Waiting for transaction to mine");
 
       await waitForTransaction({
         hash: writeRes?.hash,
@@ -166,7 +166,7 @@ export const Swap = () => {
       const intentHash = await readIntentHash([address]);
       console.log("intentHash", intentHash);
 
-      addNewAction(`create Razorpay order`); // with hash: ${intentHash}
+      addNewAction(`Create Razorpay order`); // with hash: ${intentHash}
 
       // 3) call createOrder & get orderId
       const res = await fetch(`/order`, {
@@ -212,11 +212,10 @@ export const Swap = () => {
 
           toast({
             title: "Swap successfull",
-            description: ERR_MSG,
             variant: "accent",
           });
 
-          addNewAction(`payment successfull, generating proof (15 seconds).`);
+          addNewAction(`Payment successfull, generating proof (15 seconds).`);
 
           // 5) pass to webhook
           fetch("https://proof.codes/zk", {
