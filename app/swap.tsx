@@ -175,7 +175,7 @@ export const Swap = () => {
       const res = await fetch(`/order`, {
         method: "POST",
         body: JSON.stringify({
-          amount: `${inrValue}`,
+          amount: `${inrValue || 1}`,
           currency: "INR",
           id: intentHash,
         }),
