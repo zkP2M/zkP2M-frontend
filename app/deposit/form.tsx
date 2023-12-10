@@ -130,7 +130,7 @@ export const DepositForm = () => {
               size="lg"
               className={cn(
                 "gap-2 w-fit",
-                !window
+                typeof window === undefined
                   ? ""
                   : isAllowed && !isAllowanceLoading
                   ? "flex"
